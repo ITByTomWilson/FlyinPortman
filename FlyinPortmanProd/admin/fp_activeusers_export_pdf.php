@@ -260,7 +260,9 @@ $sqlexport = "SELECT
   fp_refYesNo1.yesNoVal AS portable,
   fp_refYesNo2.yesNoVal AS microsoft,
   fp_refYesNo3.yesNoVal AS playstation,
-  fp_refYesNo4.yesNoVal AS pc
+  fp_refYesNo4.yesNoVal AS pc,
+  fp_refYesNo5.yesNoVal AS nintendo,
+  fp_refYesNo6.yesNoVal AS siteadmin
 FROM
   fp_users
   LEFT OUTER JOIN fp_userprops ON (fp_users.fpUsersID = fp_userprops.fpUserID)
@@ -271,13 +273,15 @@ FROM
   INNER JOIN fp_refYesNo fp_refYesNo2 ON (fp_userpermissions.microsoft = fp_refYesNo2.refEnabledID)
   INNER JOIN fp_refYesNo fp_refYesNo3 ON (fp_userpermissions.playstation = fp_refYesNo3.refEnabledID)
   INNER JOIN fp_refYesNo fp_refYesNo4 ON (fp_userpermissions.pc = fp_refYesNo4.refEnabledID)
+  INNER JOIN fp_refYesNo fp_refYesNo5 ON (fp_userpermissions.nintendo = fp_refYesNo5.refEnabledID)
+  INNER JOIN fp_refYesNo fp_refYesNo6 ON (fp_userpermissions.admin = fp_refYesNo6.refEnabledID)
 WHERE
   fp_users.userActive = 1";
 $pdf->resultset = mysql_query($sqlexport);
-$pdf->field_indexs = array(1,2,3,4,5,6,7,8,9,10,11,12);
-$pdf->col_titles = array('Username','Rank','First Name','Last Name','Active User','Membership Date','User Email','Birth Date','Portable','Microsoft','Playstation','Pc');
-$pdf->col_widths = array('25','25','25','25','25','25','25','25','25','25','25','25');
-$pdf->col_align = array('C','C','C','C','C','C','C','C','C','C','C','C');
+$pdf->field_indexs = array(1,2,3,4,6,7,8,9,10,11,12,13,14);
+$pdf->col_titles = array('Token Code','Rank','First Name','Last Name','Membership Date','User Email','Birth Date','Portable','Microsoft','Sony','Computer','Nintendo','Site Admin');
+$pdf->col_widths = array('25','25','25','25','25','25','25','25','25','25','25','25','25');
+$pdf->col_align = array('C','C','C','C','C','C','C','C','C','C','C','C','C');
 $pdf->show_border = $border;
 $pdf->SetFont('Arial','',8);
 $pdf->AliasNbPages();

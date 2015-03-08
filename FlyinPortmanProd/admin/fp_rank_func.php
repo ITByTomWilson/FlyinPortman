@@ -66,10 +66,9 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
         'fp_rank.fp_rankName'
         ,'fp_rank.fp_rankDetails'
         ,''
-        ,''
 	  );
 
-    $qrystr = array_fill(0, 4, "");
+    $qrystr = array_fill(0, 3, "");
     $clr = art_request("clr_fp_rank", "");
     $clr_adv_session = art_request("clr_fp_rank_adv_session", "");
 
@@ -77,7 +76,6 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
         art_clear_session("fp_rank_sort1");	
         art_clear_session("fp_rank_sort2");	
         art_clear_session("fp_rank_sort3");	
-        art_clear_session("fp_rank_sort4");	
         $clr = "";
 	  }
 
@@ -94,7 +92,6 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
     art_assign_session("fp_rank_sort1", "");
     art_assign_session("fp_rank_sort2", "");
     art_assign_session("fp_rank_sort3", "");
-    art_assign_session("fp_rank_sort4", "");
     art_assign_session("fp_rank_page_size", 20);
     art_assign_session("fp_rank_page", "1");
     $sql_array  = art_split_sql(" select * from `fp_rank`"); 
@@ -103,13 +100,12 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
     $sort1 = art_session("fp_rank_sort1", "");
     $sort2 = art_session("fp_rank_sort2", "");
     $sort3 = art_session("fp_rank_sort3", "");
-    $sort4 = art_session("fp_rank_sort4", "");
     $page_size = art_session("fp_rank_page_size", "20");
     $page = art_session("fp_rank_page", "1");
     $current_page = $page;
     $search = "";
     $sql_condition = $sql_start;
-    for ($i=1; $i<=4; $i++){
+    for ($i=1; $i<=3; $i++){
         $sorting = "";
         $sort_order = "";
         if (art_session("fp_rank_sort".$i, "") == "1"){
@@ -157,7 +153,7 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
     print "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  width=\"100%\">\n";
     print "    <tr>\n";
     print "    <td colspan=\"3\" valign=\"top\" class=\"mainMenuBG\" >\n";
-    print "        <table align=\"left\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
+    print "        <table align=\"center\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
     print "            <tr>\n";
     $sessionlevel = art_session('art_user_level', -1);
     $menuprint = false;
@@ -182,6 +178,18 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
       $menuprint = false;
     }
     print "                <td>\n";
+    print "<a href=\"" . "./fp_allusers.php". "\"" . " title=\"All Users\" target=\"_self\" class=\"mainMenuLink\"><div><p>All Users</p></div></a>";
+    print "                </td>\n";
+    $menuprint = true;
+    if ($menuprint) {
+      print "                <td>\n";
+      print "                    <span class=\"mainMenuText\">\n";
+      print "                        &nbsp;|&nbsp;\n";
+      print "                    </span>\n";
+      print "                </td>\n";
+      $menuprint = false;
+    }
+    print "                <td>\n";
     print "<a href=\"" . "./fp_rank.php". "\"" . " title=\"Ranks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Ranks</p></div></a>";
     print "                </td>\n";
     $menuprint = true;
@@ -194,7 +202,7 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
       $menuprint = false;
     }
     print "                <td>\n";
-    print "<a href=\"" . "./fp_networks.php". "\"" . " title=\"Social Networks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Social Networks</p></div></a>";
+    print "<a href=\"" . "./fp_networks.php". "\"" . " title=\"Networks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Networks</p></div></a>";
     print "                </td>\n";
     $menuprint = true;
     print "            </tr>\n";
@@ -219,7 +227,7 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
     print "            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridHeader\" >\n";
     print "                <tr>\n";
     print "                    <td class=\"gridHeaderBGLeft\" nowrap >&nbsp;</td>\n";
-    print "                    <td class=\"gridHeaderBG\" colspan=\"4\">\n";
+    print "                    <td class=\"gridHeaderBG\" colspan=\"3\">\n";
     print "                        <table border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n";
     print "                            <tr>\n";
     print "                                <td valign=\"baseline\" ><span class=\"gridHeaderText\">" . $gridtitle . "</span></td>\n";
@@ -232,7 +240,7 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
     print "";
     print "            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridToolBar\" >\n";
     print "                <tr>\n";
-    print "                    <td colspan=\"4\">\n";
+    print "                    <td colspan=\"3\">\n";
     print "                        <table border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n";
     print "                            <tr>\n";
     print "                                <td valign=\"baseline\" >";
@@ -273,11 +281,6 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
     } else if (trim($sort2) == ""){
         print "                            <a href=\"" . art_gen_url($qrystr[2] ,1) . "\" class=\"gridColumnLink\"><img src=\"./images/defaultbutton/sort_none.gif\" border=\"0\" /></a>\n";
     }
-    print "                        </div>\n";
-    print "                    </td>\n";
-    print "                    <td class=\"gridColumn\" width=\"40px\"  NOWRAP >\n";
-    print "                        <div class=\"gridColumnText\">\n";
-    print "                            <a class=\"gridColumnText\">&nbsp;</a>\n";
     print "                        </div>\n";
     print "                    </td>\n";
     print "                    <td class=\"gridColumn\" width=\"40px\"  NOWRAP >\n";
@@ -338,29 +341,20 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
             print "<img src=\"" . $filename . "\"  border=\"0\" />";
             print "</a>";
             print "</td>\n";
-            print "<td align=\"center\" >";
-            print "<a href=\"" . "" ."[fp_rank_delete]". "?pm_fpRankID=" . art_rowdata_byname($row, $field_names, "fp_rank.fpRankID"). "\"" . " title=\"Delete\" target=\"_self\" class=\"gridBodyLink\">";
-            $filename = "./images/defaultbutton/delete.gif";
-            if ($filename == ""){
-                $filename = "";
-            }
-            print "<img src=\"" . $filename . "\"  border=\"0\" />";
-            print "</a>";
-            print "</td>\n";
             print "</tr>\n";
 
             $i++;
         }
     } else {
         print "                <tr class=\"gridRow\">\n";
-        print "                    <td colspan=\"4\" ><div class=\"gridErrMsg\">" . $emptydatatext . "</div></td>\n";
+        print "                    <td colspan=\"3\" ><div class=\"gridErrMsg\">" . $emptydatatext . "</div></td>\n";
         print "                </tr>\n";
     }
     print "            </table>\n";
     print "            <table  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridFooter\" >\n";
     print "                <tr>\n";
     print "                    <td class=\"gridFooterLeft\" nowrap >&nbsp;</td>\n";
-    print "                    <td class=\"gridFooterBG\" colspan=\"4\">\n";
+    print "                    <td class=\"gridFooterBG\" colspan=\"3\">\n";
     if ( ($numrows > 0) && ($result) ){
         if (isset($_SERVER["QUERY_STRING"])){
             parse_str($_SERVER["QUERY_STRING"], $query_array);
@@ -449,10 +443,9 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
         'fp_rank.fp_rankName'
         ,'fp_rank.fp_rankDetails'
         ,''
-        ,''
 	  );
 
-    $qrystr = array_fill(0, 4, "");
+    $qrystr = array_fill(0, 3, "");
 
     $clr = art_request("clr_fp_rank", "");
     $clr_adv_session = art_request("clr_fp_rank_adv_session", "");
@@ -461,7 +454,6 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
         art_clear_session("fp_rank_sort1");	
         art_clear_session("fp_rank_sort2");	
         art_clear_session("fp_rank_sort3");	
-        art_clear_session("fp_rank_sort4");	
         $clr = "";
 	  }
 
@@ -479,7 +471,6 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
     art_assign_session("fp_rank_sort1", "");
     art_assign_session("fp_rank_sort2", "");
     art_assign_session("fp_rank_sort3", "");
-    art_assign_session("fp_rank_sort4", "");
     $sql_array  = art_split_sql(" select * from `fp_rank`"); 
     $sql_start = $sql_array[0]; 
     $sql_orderby = $sql_array[1]; 
@@ -487,13 +478,12 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
     $sort1 = art_session("fp_rank_sort1", "");
     $sort2 = art_session("fp_rank_sort2", "");
     $sort3 = art_session("fp_rank_sort3", "");
-    $sort4 = art_session("fp_rank_sort4", "");
     $page_size = art_session("fp_rank_page_size", "20");
     $page = art_session("fp_rank_page", "1");
     $current_page = $page;
     $search = "";
     $sql_condition = $sql_start;
-    for ($i=1; $i<=4; $i++){
+    for ($i=1; $i<=3; $i++){
         $sorting = "";
         $sort_order = "";
 		    if (art_session("fp_rank_sort".$i, "") == "1"){
@@ -542,7 +532,7 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
     print "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  width=\"100%\">\n";
     print "    <tr>\n";
     print "    <td colspan=\"3\" valign=\"top\" class=\"mainMenuBG\" >\n";
-    print "        <table align=\"left\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
+    print "        <table align=\"center\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
     print "            <tr>\n";
     $sessionlevel = art_session('art_user_level', -1);
     $menuprint = false;
@@ -567,6 +557,18 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
       $menuprint = false;
     }
     print "                <td>\n";
+    print "<a href=\"" . "./fp_allusers.php". "\"" . " title=\"All Users\" target=\"_self\" class=\"mainMenuLink\"><div><p>All Users</p></div></a>";
+    print "                </td>\n";
+    $menuprint = true;
+    if ($menuprint) {
+      print "                <td>\n";
+      print "                    <span class=\"mainMenuText\">\n";
+      print "                        &nbsp;|&nbsp;\n";
+      print "                    </span>\n";
+      print "                </td>\n";
+      $menuprint = false;
+    }
+    print "                <td>\n";
     print "<a href=\"" . "./fp_rank.php". "\"" . " title=\"Ranks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Ranks</p></div></a>";
     print "                </td>\n";
     $menuprint = true;
@@ -579,7 +581,7 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
       $menuprint = false;
     }
     print "                <td>\n";
-    print "<a href=\"" . "./fp_networks.php". "\"" . " title=\"Social Networks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Social Networks</p></div></a>";
+    print "<a href=\"" . "./fp_networks.php". "\"" . " title=\"Networks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Networks</p></div></a>";
     print "                </td>\n";
     $menuprint = true;
     print "            </tr>\n";
@@ -604,7 +606,7 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
     print "            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridHeader\" >\n";
     print "                <tr>\n";
     print "                    <td class=\"gridHeaderBGLeft\" nowrap >&nbsp;</td>\n";
-    print "                    <td class=\"gridHeaderBG\" colspan=\"4\">\n";
+    print "                    <td class=\"gridHeaderBG\" colspan=\"3\">\n";
     print "                        <table border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n";
     print "                            <tr>\n";
     print "                                <td valign=\"baseline\" ><span class=\"gridHeaderText\">" . $gridtitle . "</span></td>\n";
@@ -616,7 +618,7 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
     print "            </table>\n";
     print "            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridToolBar\" >\n";
     print "                <tr>\n";
-    print "                    <td colspan=\"4\">\n";
+    print "                    <td colspan=\"3\">\n";
     print "                        <table border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n";
     print "                            <tr>\n";
     print "                                <td valign=\"baseline\" >";
@@ -638,7 +640,6 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
     print "                <tr>\n";
     print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Rank</div></td>\n";
     print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Details</div></td>\n";
-    print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">&nbsp;</div></td>\n";
     print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">&nbsp;</div></td>\n";
     print "                </tr>\n";
     print "            </tbody>\n";
@@ -664,7 +665,7 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
                 }
                 print "            <tbody id=\"header_gr_". $gr_1 ."\">\n"; 
                 print "                <tr>\n"; 
-                print "                    <td colspan=\"4\" class=\"groupCaption\">\n"; 
+                print "                    <td colspan=\"3\" class=\"groupCaption\">\n"; 
                 print "                    <div class=\"gridToolBarText\" align=\"left\">";
                 print "<a href=\"javascript:art_toggle_groupdetail('"."gr_".$gr_1."','"."bt_collapse_".$gr_1."','"."bt_expand_".$gr_1."');\" title=\"" . CAP_CLOSE_GROUP . "\">";
                 print "<img type=\"image\" id=\"bt_collapse_".$gr_1."\" src=\"images/defaultbutton/ic_collapse.gif\" style=\"display:'\" border=\"0\" align=\"absmiddle\" alt=\"" . CAP_CLOSE_GROUP . "\" ></a>\n";
@@ -716,29 +717,20 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
             print "<img src=\"" . $filename . "\"  border=\"0\" />";
             print "</a>";
             print "</td>\n";
-            print "<td align=\"center\" >";
-            print "<a href=\"" . "" ."[fp_rank_delete]". "?pm_fpRankID=" . art_rowdata_byname($row, $field_names, "fp_rank.fpRankID"). "\"" . " title=\"Delete\" target=\"_self\" class=\"gridBodyLink\">";
-            $filename = "./images/defaultbutton/delete.gif";
-            if ($filename == ""){
-                $filename = "";
-            }
-            print "<img src=\"" . $filename . "\"  border=\"0\" />";
-            print "</a>";
-            print "</td>\n";
             print "</tr>\n";
 
             $i++;
         }
     }else {
         print "                <tr class=\"gridRow\">\n";
-        print "                    <td colspan=\"4\" ><div class=\"gridErrMsg\">" . $emptydatatext . "</div></td>\n";
+        print "                    <td colspan=\"3\" ><div class=\"gridErrMsg\">" . $emptydatatext . "</div></td>\n";
         print "                </tr>\n";
     }
     print "            </table>\n";
     print "            <table  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridFooter\" >\n";
     print "                <tr>\n";
     print "                    <td class=\"gridFooterLeft\" nowrap >&nbsp;</td>\n";
-    print "                    <td class=\"gridFooterBG\" colspan=\"4\">\n";
+    print "                    <td class=\"gridFooterBG\" colspan=\"3\">\n";
     if ( ($numrows > 0) && ($result) ) {
         if (isset($_SERVER["QUERY_STRING"])) {
             parse_str($_SERVER["QUERY_STRING"], $query_array);

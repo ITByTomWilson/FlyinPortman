@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <?php
+if (session_status() == PHP_SESSION_NONE) {
+	session_start();
+}
 include "php/inc_loginCheck.php";
 
 ?>
@@ -57,6 +60,11 @@ include "php/inc_loginCheck.php";
 <div id="content">
 <div>
 <h1><img src="images/members_quarters_title.png" height="50" width="400" alt="About Us"></h1>
+<h1><?php echo 'Welcome ' . $_SESSION['firstname'] . '! Your rank is ' . $_SESSION['rank'] . '.';?></h1>
+	<h1><?php
+		echo $_SESSION['loginmessage'];
+	?></h1>
+
 </div>
 
 <div id="houses">

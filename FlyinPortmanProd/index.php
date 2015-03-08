@@ -1,8 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<?php
+
+	if (session_status() == PHP_SESSION_NONE) {
+		session_start();
+		$_SESSION['loginmessage'] = '';
+	}elseif(isset($_SESSION['loggedin'])){
+		$_SESSION['loggedin'] = $_SESSION['loggedin'];
+	}else{
+		$_SESSION['loggedin'] = "false";
+	}
+
+	//if(isset($_SESSION["loginmessage"])){
+	//	$_SESSION["loginmessage"] = $_SESSION["loginmessage"];
+	//}
+	?>
 	<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-	<title>Flyin Portman</title>
+	<title>Tom - Flyin Portman</title>
 	<link href="css/style.css" rel="stylesheet" />
 	<link href="http://fonts.googleapis.com/css?family=Lora" rel="stylesheet" type="text/css" /><script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script><script src="js/tooltip.js" type="text/javascript"></script>
 	<link href="css/tooltip.css" rel="stylesheet" /><script>
@@ -35,7 +50,7 @@
 <div id="header"><a href="index.html"><img alt="Home" height="200" src="images/header.png" width="960" /></a></div>
 
 <div id="top_bar">
-<form id="login" action="php/login.php" method="post"><label for="userid4">User ID:</label> <input class="required" id="userid4" name="userid" type="text" /> &nbsp; &nbsp; &nbsp; <label for="password">Password:</label> <input class="required" id="password" name="password" type="password" /> &nbsp; &nbsp; &nbsp; <input id="submit" name="submit" type="submit" value="Submit" /></form>
+	<form id="login" action="php/login.php" method="post"><label for="userid4">User ID:</label> <input class="required" id="userid4" name="userid" type="text" /> &nbsp; &nbsp; &nbsp; <label for="password">Password:</label> <input class="required" id="password" name="password" type="password" /> &nbsp; &nbsp; &nbsp; <input id="submit" name="submit" type="submit" value="Submit" /></form>
 
 <ul>
 	<li class="tooltip" onmouseover="tooltip.pop(this, 'Facebook', {position:2})"><a href="https://www.facebook.com/groups/flyinportman/"><img alt="Like us on Facebook." src="images/icon_fb.png" /></a></li>
@@ -50,6 +65,7 @@
 
 <div id="content">
 <div>
+<h1><?php echo $_SESSION["loginmessage"]; ?></h1>
 <h1><img alt="About Us" height="50" src="images/home_title.png" width="400" /></h1>
 
 <h3>Flyin Portman History!</h3>

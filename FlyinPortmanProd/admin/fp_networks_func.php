@@ -49,6 +49,14 @@ function art_append_orderby($sql, $field) {
 }
 
 function art_gridtoolbar_display($category){
+    $hostname  = $_SERVER['HTTP_HOST'];
+    $currentpath = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+    $exportscript = "fp_networks_dialog_pdf.php";
+    $exporturl = "http://$hostname$currentpath/$exportscript";
+    print "<a href=\"javascript:art_export_pdf( '" . $exporturl . "' );\" title=\"" . CAP_EXPORT_PDF . "\"><img src=\"images/defaultbutton/pdf.gif\" border=\"0\" align=\"absmiddle\" ></a>\n";
+    $exportscript  = "fp_networks_export_xls.php";
+    $exporturl = "http://$hostname$currentpath/$exportscript";
+    print "<a href=\"javascript:art_export_xls( '" . $exporturl . "' );\" title=\"" . CAP_EXPORT_XLS . "\"><img src=\"images/defaultbutton/xls.gif\" border=\"0\" align=\"absmiddle\" ></a>\n";
 }
 
 function art_datagrid_display($field_names, $page_size, $current_page, $quick_search, $navtype, $category, $showtotalrec=0, $showpagesize=0) {	
@@ -161,7 +169,7 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
     print "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  width=\"100%\">\n";
     print "    <tr>\n";
     print "    <td colspan=\"3\" valign=\"top\" class=\"mainMenuBG\" >\n";
-    print "        <table align=\"left\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
+    print "        <table align=\"center\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
     print "            <tr>\n";
     $sessionlevel = art_session('art_user_level', -1);
     $menuprint = false;
@@ -186,6 +194,18 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
       $menuprint = false;
     }
     print "                <td>\n";
+    print "<a href=\"" . "./fp_allusers.php". "\"" . " title=\"All Users\" target=\"_self\" class=\"mainMenuLink\"><div><p>All Users</p></div></a>";
+    print "                </td>\n";
+    $menuprint = true;
+    if ($menuprint) {
+      print "                <td>\n";
+      print "                    <span class=\"mainMenuText\">\n";
+      print "                        &nbsp;|&nbsp;\n";
+      print "                    </span>\n";
+      print "                </td>\n";
+      $menuprint = false;
+    }
+    print "                <td>\n";
     print "<a href=\"" . "./fp_rank.php". "\"" . " title=\"Ranks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Ranks</p></div></a>";
     print "                </td>\n";
     $menuprint = true;
@@ -198,7 +218,7 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
       $menuprint = false;
     }
     print "                <td>\n";
-    print "<a href=\"" . "./fp_networks.php". "\"" . " title=\"Social Networks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Social Networks</p></div></a>";
+    print "<a href=\"" . "./fp_networks.php". "\"" . " title=\"Networks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Networks</p></div></a>";
     print "                </td>\n";
     $menuprint = true;
     print "            </tr>\n";
@@ -240,6 +260,7 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
     print "                        <table border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n";
     print "                            <tr>\n";
     print "                                <td valign=\"baseline\" >";
+    art_gridtoolbar_display($category);
     print "                                </td>\n";
     print "                                <td align=\"right\">\n";
     print "<a href=\"" . art_gen_url("fp_networks_ajax.php?clr_fp_networks_adv_session=y", 1). "\"" . " title=\"Show All\" class=\"gridToolBarLink\"><img src=\"./images/defaultbutton/show_all.gif\" border=\"0\" /></a>";
@@ -567,7 +588,7 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
     print "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  width=\"100%\">\n";
     print "    <tr>\n";
     print "    <td colspan=\"3\" valign=\"top\" class=\"mainMenuBG\" >\n";
-    print "        <table align=\"left\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
+    print "        <table align=\"center\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
     print "            <tr>\n";
     $sessionlevel = art_session('art_user_level', -1);
     $menuprint = false;
@@ -592,6 +613,18 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
       $menuprint = false;
     }
     print "                <td>\n";
+    print "<a href=\"" . "./fp_allusers.php". "\"" . " title=\"All Users\" target=\"_self\" class=\"mainMenuLink\"><div><p>All Users</p></div></a>";
+    print "                </td>\n";
+    $menuprint = true;
+    if ($menuprint) {
+      print "                <td>\n";
+      print "                    <span class=\"mainMenuText\">\n";
+      print "                        &nbsp;|&nbsp;\n";
+      print "                    </span>\n";
+      print "                </td>\n";
+      $menuprint = false;
+    }
+    print "                <td>\n";
     print "<a href=\"" . "./fp_rank.php". "\"" . " title=\"Ranks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Ranks</p></div></a>";
     print "                </td>\n";
     $menuprint = true;
@@ -604,7 +637,7 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
       $menuprint = false;
     }
     print "                <td>\n";
-    print "<a href=\"" . "./fp_networks.php". "\"" . " title=\"Social Networks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Social Networks</p></div></a>";
+    print "<a href=\"" . "./fp_networks.php". "\"" . " title=\"Networks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Networks</p></div></a>";
     print "                </td>\n";
     $menuprint = true;
     print "            </tr>\n";
@@ -645,6 +678,7 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
     print "                        <table border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n";
     print "                            <tr>\n";
     print "                                <td valign=\"baseline\" >";
+    art_gridtoolbar_display($category);
     print "                                </td>\n";
     print "                                <td align=\"right\">\n";
     print "<a href=\"" . art_gen_url("fp_networks_ajax.php?clr_fp_networks_adv_session=y", 1). "\"" . " title=\"Show All\" class=\"gridToolBarLink\"><img src=\"./images/defaultbutton/show_all.gif\" border=\"0\" /></a>";

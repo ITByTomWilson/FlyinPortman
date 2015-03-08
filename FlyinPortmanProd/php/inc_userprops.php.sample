@@ -1,0 +1,3 @@
+<?php
+$salt = "Salt keyword for password";
+?>

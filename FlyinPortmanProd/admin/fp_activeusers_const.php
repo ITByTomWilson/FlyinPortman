@@ -13,10 +13,12 @@ $field_names = array (
     ,"fp_refYesNo2.yesNoVal"
     ,"fp_refYesNo3.yesNoVal"
     ,"fp_refYesNo4.yesNoVal"
+    ,"fp_refYesNo5.yesNoVal"
+    ,"fp_refYesNo6.yesNoVal"
 );
 
 $current_page = "";
-$page_size = art_session("fp_activeusers_page_size", "20");
+$page_size = art_session("fp_activeusers_page_size", "100");
 $page = art_session("fp_activeusers_page", "1");
 $quick_search = art_session("fp_activeusers_quick_search", "");
 $category = "";
@@ -26,4 +28,6 @@ $artsv_postback = art_request("artsys_postback", "");
 $err_string = art_request("fp_activeusers_err_string", "");
 $pagestyle = art_request("fp_activeusers_pagestyle", "");
 $navtype = "text";
+$artsv_act_search = trim(art_request("btn_search", ""));
+$artsv_quick_search = art_request("artsys_quick_search", "");
 ?>

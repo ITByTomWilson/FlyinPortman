@@ -13,7 +13,9 @@ function art_call_ajax(url){
     {
 	       url = url.replace("?", '?no-cache=' + Math.floor( Math.random() * 1000 ) + '&');
     }
+    startLoading();
     var updater = new Ajax.Updater(target, url, {evalScripts:true, method: 'get',	parameters: pars});
+    setTimeout('finishLoading();', 1000);
 }
 
 function art_form_submit(sender, use_ajax, url){
@@ -36,7 +38,9 @@ function art_form_submit(sender, use_ajax, url){
     {
 	       url = url.replace("?", '?aj=1&no-cache=' + Math.floor( Math.random() * 1000 ) + '&');
     }
+    startLoading();
     var updater = new Ajax.Updater(target, url, {evalScripts:true, method: 'get', parameters: pars});
+    setTimeout('finishLoading();', 1000);
 	}
 }
 

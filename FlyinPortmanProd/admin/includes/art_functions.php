@@ -656,6 +656,29 @@ function art_check_verification($code){
     return $err;
 }
 
+function art_waitingmsg_display(){
+    print "<div id=\"loadingbg\" class=\"MaskLoadingBG\">\n";
+    print "</div>\n";
+    print "<div style=\"z-index: 99;  position: absolute;\" id=\"invisiblediv\";>\n";
+    print "    <table width=\"100%\">\n";
+    print "        <tr>\n";
+    print "            <td valign=\"top\" align=\"center\" valign=\"middle\" >\n";
+    print "                <div class=\"LoadingBlock\" id=\"loadingblock\">\n";
+    print "                    <table width=\"100%\" height=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" >\n";
+    print "                        <tr>\n";
+    print "                            <td valign=\"middle\" align=\"center\" >\n";
+    print "                                <img src=\"images/ajaxloading.gif\" align=\"absmiddle\" border=\"0\" />\n";
+    print "                                <font class=\"LoadingBlockText\">Loading Please Wait...</font>\n";
+    print "                            </td>\n";
+    print "                        </tr>\n";
+    print "                    </table>\n";
+    print "                </div>\n";
+    print "            </td>\n";
+    print "        </tr>\n";
+    print "    </table>\n";
+    print "</div>\n";
+}
+
 function art_reload_script($artistform, $fckeditor){
     print "<script language=\"javascript\" type=\"text/javascript\">";
     if ($artistform){
@@ -695,6 +718,11 @@ function art_sitemenu_display($forpage, $cssname){
         print "                 <li class=\"siteMenuSelected\">Social Networks</li>\n";
     } else {
         print "                 <li><a href=\"" . "./fp_networks.php?clr_fp_networks=t&clr_fp_networks_adv_session=y". "\"" . " title=\"fp_networks\">Social Networks</a></li>\n";
+    }
+    if ($forpage == "fp_allusers" ){
+        print "                 <li class=\"siteMenuSelected\">fp_allusers</li>\n";
+    } else {
+        print "                 <li><a href=\"" . "./fp_allusers.php?clr_fp_allusers=t&clr_fp_allusers_adv_session=y". "\"" . " title=\"fp_allusers\">fp_allusers</a></li>\n";
     }
     print "             </ul>\n";
     print "             </div>\n";

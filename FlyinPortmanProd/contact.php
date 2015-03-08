@@ -2,7 +2,11 @@
 
 <html>
 <head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
-	
+	<?php
+	if (session_status() == PHP_SESSION_NONE) {
+		session_start();
+	}
+	?>
 	<title>Flyin Portman</title>
 	<link href="css/style.css" rel="stylesheet" />
 	<link href="http://fonts.googleapis.com/css?family=Lora" rel="stylesheet" type="text/css" /><script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script><script src="js/tooltip.js" type="text/javascript"></script>
@@ -52,7 +56,6 @@
 <div id="content">
 <div id="contact_form">
 <h1><img alt="Contact Us" height="50" src="images/contact_title.png" width="400" /></h1>
-
 <p></p>
 <br />
 Please use the provided links below to help direct to the correct party<br>

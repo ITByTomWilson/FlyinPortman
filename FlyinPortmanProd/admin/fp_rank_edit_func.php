@@ -45,7 +45,7 @@ function art_form_updatedata_display($form, $message){
     print "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  width=\"100%\">\n";
     print "    <tr>\n";
     print "    <td colspan=\"3\" valign=\"top\" class=\"mainMenuBG\" >\n";
-    print "        <table align=\"left\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
+    print "        <table align=\"center\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
     print "            <tr>\n";
     $sessionlevel = art_session('art_user_level', -1);
     $menuprint = false;
@@ -70,6 +70,18 @@ function art_form_updatedata_display($form, $message){
       $menuprint = false;
     }
     print "                <td>\n";
+    print "<a href=\"" . "./fp_allusers.php". "\"" . " title=\"All Users\" target=\"_self\" class=\"mainMenuLink\"><div><p>All Users</p></div></a>";
+    print "                </td>\n";
+    $menuprint = true;
+    if ($menuprint) {
+      print "                <td>\n";
+      print "                    <span class=\"mainMenuText\">\n";
+      print "                        &nbsp;|&nbsp;\n";
+      print "                    </span>\n";
+      print "                </td>\n";
+      $menuprint = false;
+    }
+    print "                <td>\n";
     print "<a href=\"" . "./fp_rank.php". "\"" . " title=\"Ranks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Ranks</p></div></a>";
     print "                </td>\n";
     $menuprint = true;
@@ -82,7 +94,7 @@ function art_form_updatedata_display($form, $message){
       $menuprint = false;
     }
     print "                <td>\n";
-    print "<a href=\"" . "./fp_networks.php". "\"" . " title=\"Social Networks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Social Networks</p></div></a>";
+    print "<a href=\"" . "./fp_networks.php". "\"" . " title=\"Networks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Networks</p></div></a>";
     print "                </td>\n";
     $menuprint = true;
     print "            </tr>\n";

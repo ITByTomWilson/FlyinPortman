@@ -10,6 +10,8 @@ function art_form_updatedata_display($form, $message){
         ,"fp_userpermissions.microsoft"
         ,"fp_userpermissions.playstation"
         ,"fp_userpermissions.pc"
+        ,"fp_userpermissions.nintendo"
+        ,"fp_userpermissions.admin"
     );
 
     $artv_editpermissionsbyid = art_request("editpermissionsbyid", "");
@@ -17,6 +19,8 @@ function art_form_updatedata_display($form, $message){
     $artv_microsoft = art_request("microsoft", "");
     $artv_playstation = art_request("playstation", "");
     $artv_pc = art_request("pc", "");
+    $artv_nintendo = art_request("nintendo", "");
+    $artv_siteadmin = art_request("siteadmin", "");
 
     $disabled = "";
     $check = "";
@@ -41,6 +45,8 @@ function art_form_updatedata_display($form, $message){
         $artv_microsoft =  number_format( art_rowdata($row, 3) , 2, '.', ',' ) ;
         $artv_playstation =  number_format( art_rowdata($row, 4) , 2, '.', ',' ) ;
         $artv_pc =  number_format( art_rowdata($row, 5) , 2, '.', ',' ) ;
+        $artv_nintendo =  number_format( art_rowdata($row, 6) , 2, '.', ',' ) ;
+        $artv_siteadmin =  number_format( art_rowdata($row, 7) , 2, '.', ',' ) ;
 
     }
     print "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  width=\"100%\" align=\"center\">\n";
@@ -50,7 +56,7 @@ function art_form_updatedata_display($form, $message){
     print "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  width=\"100%\">\n";
     print "    <tr>\n";
     print "    <td colspan=\"3\" valign=\"top\" class=\"mainMenuBG\" >\n";
-    print "        <table align=\"left\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
+    print "        <table align=\"center\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
     print "            <tr>\n";
     $sessionlevel = art_session('art_user_level', -1);
     $menuprint = false;
@@ -75,6 +81,18 @@ function art_form_updatedata_display($form, $message){
       $menuprint = false;
     }
     print "                <td>\n";
+    print "<a href=\"" . "./fp_allusers.php". "\"" . " title=\"All Users\" target=\"_self\" class=\"mainMenuLink\"><div><p>All Users</p></div></a>";
+    print "                </td>\n";
+    $menuprint = true;
+    if ($menuprint) {
+      print "                <td>\n";
+      print "                    <span class=\"mainMenuText\">\n";
+      print "                        &nbsp;|&nbsp;\n";
+      print "                    </span>\n";
+      print "                </td>\n";
+      $menuprint = false;
+    }
+    print "                <td>\n";
     print "<a href=\"" . "./fp_rank.php". "\"" . " title=\"Ranks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Ranks</p></div></a>";
     print "                </td>\n";
     $menuprint = true;
@@ -87,7 +105,7 @@ function art_form_updatedata_display($form, $message){
       $menuprint = false;
     }
     print "                <td>\n";
-    print "<a href=\"" . "./fp_networks.php". "\"" . " title=\"Social Networks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Social Networks</p></div></a>";
+    print "<a href=\"" . "./fp_networks.php". "\"" . " title=\"Networks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Networks</p></div></a>";
     print "                </td>\n";
     $menuprint = true;
     print "            </tr>\n";
@@ -132,7 +150,7 @@ function art_form_updatedata_display($form, $message){
 
     $control_name = "portable";
     $control_caption = "Portable";
-    $sql = " SELECT * FROM `fp_refYesNo`";
+    $sql = "SELECT * FROM `fp_refYesNo`";
     $mastervalue = "";
     $keyfield = "";
     $css = '';
@@ -160,7 +178,7 @@ function art_form_updatedata_display($form, $message){
 
     $control_name = "microsoft";
     $control_caption = "Microsoft";
-    $sql = " SELECT * FROM `fp_refYesNo`";
+    $sql = "SELECT * FROM `fp_refYesNo`";
     $mastervalue = "";
     $keyfield = "";
     $css = '';
@@ -188,7 +206,7 @@ function art_form_updatedata_display($form, $message){
 
     $control_name = "playstation";
     $control_caption = "Playstation";
-    $sql = " SELECT * FROM `fp_refYesNo`";
+    $sql = "SELECT * FROM `fp_refYesNo`";
     $mastervalue = "";
     $keyfield = "";
     $css = '';
@@ -216,7 +234,7 @@ function art_form_updatedata_display($form, $message){
 
     $control_name = "pc";
     $control_caption = "PC";
-    $sql = " SELECT * FROM `fp_refYesNo`";
+    $sql = "SELECT * FROM `fp_refYesNo`";
     $mastervalue = "";
     $keyfield = "";
     $css = '';
@@ -227,6 +245,62 @@ function art_form_updatedata_display($form, $message){
     $ismaster = false;
             print "<tr>\n";
         print "<td class=\"formColumnCaption\">PC</td>\n";
+            print "<td width=\"3\" class=\"formColumnData\">&nbsp;</td>\n";
+            print "<td class=\"formColumnData\" align=\"Left\">\n";
+            $multiline = false;
+            $size = "1";
+            $width = "";
+            $firstitem_label = "";
+            $firstitem_value = "";
+            art_combobox_display($control_name, $control_caption, $sql, $mastervalue, $keyfield, $css, $disabled, $fieldvalue, $fieldlabel, $value, $url, $ismaster, $multiline, $size, $width, $firstitem_label, $firstitem_value);
+            print "</td>\n";
+            print "</tr>\n";
+    $value = $artv_nintendo;
+    if (($value == "") || ($value == null)) {
+        $value = "";
+    }
+
+    $control_name = "nintendo";
+    $control_caption = "Nintendo";
+    $sql = "SELECT * FROM `fp_refYesNo`";
+    $mastervalue = "";
+    $keyfield = "";
+    $css = '';
+    $disabled = "true";
+    $fieldvalue = "refEnabledID";
+    $fieldlabel = "yesNoVal";
+    $url = "fp_editpermissions_ajax.php?rv=1";
+    $ismaster = false;
+            print "<tr>\n";
+        print "<td class=\"formColumnCaption\">Nintendo</td>\n";
+            print "<td width=\"3\" class=\"formColumnData\">&nbsp;</td>\n";
+            print "<td class=\"formColumnData\" align=\"Left\">\n";
+            $multiline = false;
+            $size = "1";
+            $width = "";
+            $firstitem_label = "";
+            $firstitem_value = "";
+            art_combobox_display($control_name, $control_caption, $sql, $mastervalue, $keyfield, $css, $disabled, $fieldvalue, $fieldlabel, $value, $url, $ismaster, $multiline, $size, $width, $firstitem_label, $firstitem_value);
+            print "</td>\n";
+            print "</tr>\n";
+    $value = $artv_siteadmin;
+    if (($value == "") || ($value == null)) {
+        $value = "";
+    }
+
+    $control_name = "siteadmin";
+    $control_caption = "Site Admin";
+    $sql = "SELECT * FROM `fp_refYesNo`";
+    $mastervalue = "";
+    $keyfield = "";
+    $css = '';
+    $disabled = "true";
+    $fieldvalue = "refEnabledID";
+    $fieldlabel = "yesNoVal";
+    $url = "fp_editpermissions_ajax.php?rv=1";
+    $ismaster = false;
+            print "<tr>\n";
+        print "<td class=\"formColumnCaption\">Site Admin</td>\n";
             print "<td width=\"3\" class=\"formColumnData\">&nbsp;</td>\n";
             print "<td class=\"formColumnData\" align=\"Left\">\n";
             $multiline = false;
@@ -280,6 +354,8 @@ function art_update_data(){
     $artv_microsoft = art_request("microsoft", "");
     $artv_playstation = art_request("playstation", "");
     $artv_pc = art_request("pc", "");
+    $artv_nintendo = art_request("nintendo", "");
+    $artv_siteadmin = art_request("siteadmin", "");
     $err_require = "";
     if ($err_require != "") {
         return $err_require;
@@ -301,6 +377,8 @@ function art_update_data(){
         $sql .= ",fp_userpermissions.microsoft = " .  art_quote_intval($artv_microsoft); 
         $sql .= ",fp_userpermissions.playstation = " .  art_quote_intval($artv_playstation); 
         $sql .= ",fp_userpermissions.pc = " .  art_quote_intval($artv_pc); 
+        $sql .= ",fp_userpermissions.nintendo = " .  art_quote_intval($artv_nintendo); 
+        $sql .= ",fp_userpermissions.admin = " .  art_quote_intval($artv_siteadmin); 
         $sql .= " WHERE ";
         $sql .= " fp_userpermissions.fpUsersID = " .  art_quote_strval($artv_editpermissionsbyid);
     }

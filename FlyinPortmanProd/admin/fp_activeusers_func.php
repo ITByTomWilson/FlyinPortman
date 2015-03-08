@@ -2,10 +2,48 @@
 require_once './includes/art_functions.php';
 require_once './fp_activeusers_const.php';
 
-
+function art_simplesearch_display($search_value){
+    $searchbox_caption = "Search (By Email or Token Code)";
+    print "<div id=\"sch_defaulttheme\">";
+    print "<br />\n";
+    print "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"300\"  align=\"center\">\n";
+    print "    <tr>\n";
+    print "        <td class=\"schHeaderBGLeft\">&nbsp;</td>\n";
+    print "        <td class=\"schHeaderBG\"><span class=\"schHeaderText\">" . $searchbox_caption . "</span>&nbsp;</td>\n";
+    print "        <td class=\"schHeaderBGRight\">&nbsp;</td>\n";
+    print "    </tr>\n";
+    print "    <tr class=\"schBody\">\n";
+    print "        <td class=\"schColumnBGLeft\">&nbsp;</td>\n";
+    print "        <td valign=\"middle\" height=\"50\" align=\"center\">\n";
+    print "            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n";
+    print "                <tr>\n";
+    print "                    <td><input class=\"textbox\" type=\"text\" name=\"artsys_quick_search\" id=\"artsys_quick_search\" value=\"" . $search_value . "\"></td>\n";
+    print "                    <td width=\"5\">&nbsp;</td>\n";
+    print "                    <td><input class=\"button\" name=\"btn_search\" id=\"btn_search\" type=\"submit\" value=\"" . CAP_BUTTON_SEARCH . "\"></td>\n";
+    print "                </tr>\n";
+    print "            </table>\n";
+    print "        </td>\n";
+    print "        <td class=\"schColumnBGRight\" >&nbsp;</td>\n";
+    print "    </tr>\n";
+    print "    <tr class=\"schFooter\">\n";
+    print "        <td></td>\n";
+    print "        <td></td>\n";
+    print "        <td></td>\n";
+    print "    </tr>\n";
+    print "</table>\n";
+    print "</div>";
+}
 
 function art_simplesearch_sql($start_sql, $search_value) {
     $sql = "";
+    if (!strpos(strtoupper($start_sql), "WHERE")) {
+        $sql = " WHERE (";
+    } else {
+        $sql = " AND (";
+    }
+    $sql .= "fp_users.username LIKE '%" . $search_value . "%' ";
+    $sql .= " OR fp_userprops.userEmail LIKE '%" . $search_value . "%' ";
+    $sql .= ")";
     return $sql;
 }
 
@@ -75,7 +113,6 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
         ,'fp_rank.fp_rankName'
         ,'fp_userprops.userFirstName'
         ,'fp_userprops.userLastName'
-        ,'fp_refYesNo.yesNoVal'
         ,'fp_users.membershipDate'
         ,'fp_userprops.userEmail'
         ,'fp_userprops.userBirthDate'
@@ -83,12 +120,14 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
         ,'fp_refYesNo2.yesNoVal'
         ,'fp_refYesNo3.yesNoVal'
         ,'fp_refYesNo4.yesNoVal'
+        ,'fp_refYesNo5.yesNoVal'
+        ,'fp_refYesNo6.yesNoVal'
         ,''
         ,''
         ,''
 	  );
 
-    $qrystr = array_fill(0, 15, "");
+    $qrystr = array_fill(0, 16, "");
     $clr = art_request("clr_fp_activeusers", "");
     $clr_adv_session = art_request("clr_fp_activeusers_adv_session", "");
 
@@ -108,6 +147,7 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
         art_clear_session("fp_activeusers_sort13");	
         art_clear_session("fp_activeusers_sort14");	
         art_clear_session("fp_activeusers_sort15");	
+        art_clear_session("fp_activeusers_sort16");	
         $clr = "";
 	  }
 
@@ -136,7 +176,8 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
     art_assign_session("fp_activeusers_sort13", "");
     art_assign_session("fp_activeusers_sort14", "");
     art_assign_session("fp_activeusers_sort15", "");
-    art_assign_session("fp_activeusers_page_size", 20);
+    art_assign_session("fp_activeusers_sort16", "");
+    art_assign_session("fp_activeusers_page_size", 100);
     art_assign_session("fp_activeusers_page", "1");
     $sql_array  = art_split_sql(" SELECT 
   fp_users.fpUsersID AS UserID,
@@ -151,7 +192,9 @@ function art_datagrid_display($field_names, $page_size, $current_page, $quick_se
   fp_refYesNo1.yesNoVal AS portable,
   fp_refYesNo2.yesNoVal AS microsoft,
   fp_refYesNo3.yesNoVal AS playstation,
-  fp_refYesNo4.yesNoVal AS pc
+  fp_refYesNo4.yesNoVal AS pc,
+  fp_refYesNo5.yesNoVal AS nintendo,
+  fp_refYesNo6.yesNoVal AS siteadmin
 FROM
   fp_users
   LEFT OUTER JOIN fp_userprops ON (fp_users.fpUsersID = fp_userprops.fpUserID)
@@ -162,6 +205,8 @@ FROM
   INNER JOIN fp_refYesNo fp_refYesNo2 ON (fp_userpermissions.microsoft = fp_refYesNo2.refEnabledID)
   INNER JOIN fp_refYesNo fp_refYesNo3 ON (fp_userpermissions.playstation = fp_refYesNo3.refEnabledID)
   INNER JOIN fp_refYesNo fp_refYesNo4 ON (fp_userpermissions.pc = fp_refYesNo4.refEnabledID)
+  INNER JOIN fp_refYesNo fp_refYesNo5 ON (fp_userpermissions.nintendo = fp_refYesNo5.refEnabledID)
+  INNER JOIN fp_refYesNo fp_refYesNo6 ON (fp_userpermissions.admin = fp_refYesNo6.refEnabledID)
 WHERE
   fp_users.userActive = 1"); 
     $sql_start = $sql_array[0]; 
@@ -181,12 +226,13 @@ WHERE
     $sort13 = art_session("fp_activeusers_sort13", "");
     $sort14 = art_session("fp_activeusers_sort14", "");
     $sort15 = art_session("fp_activeusers_sort15", "");
-    $page_size = art_session("fp_activeusers_page_size", "20");
+    $sort16 = art_session("fp_activeusers_sort16", "");
+    $page_size = art_session("fp_activeusers_page_size", "100");
     $page = art_session("fp_activeusers_page", "1");
     $current_page = $page;
     $search = "";
-    $sql_condition = $sql_start;
-    for ($i=1; $i<=15; $i++){
+    $sql_condition = $sql_start . art_simplesearch_sql($sql_start, $quick_search);
+    for ($i=1; $i<=16; $i++){
         $sorting = "";
         $sort_order = "";
         if (art_session("fp_activeusers_sort".$i, "") == "1"){
@@ -234,7 +280,7 @@ WHERE
     print "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  width=\"100%\">\n";
     print "    <tr>\n";
     print "    <td colspan=\"3\" valign=\"top\" class=\"mainMenuBG\" >\n";
-    print "        <table align=\"left\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
+    print "        <table align=\"center\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
     print "            <tr>\n";
     $sessionlevel = art_session('art_user_level', -1);
     $menuprint = false;
@@ -259,6 +305,18 @@ WHERE
       $menuprint = false;
     }
     print "                <td>\n";
+    print "<a href=\"" . "./fp_allusers.php". "\"" . " title=\"All Users\" target=\"_self\" class=\"mainMenuLink\"><div><p>All Users</p></div></a>";
+    print "                </td>\n";
+    $menuprint = true;
+    if ($menuprint) {
+      print "                <td>\n";
+      print "                    <span class=\"mainMenuText\">\n";
+      print "                        &nbsp;|&nbsp;\n";
+      print "                    </span>\n";
+      print "                </td>\n";
+      $menuprint = false;
+    }
+    print "                <td>\n";
     print "<a href=\"" . "./fp_rank.php". "\"" . " title=\"Ranks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Ranks</p></div></a>";
     print "                </td>\n";
     $menuprint = true;
@@ -271,7 +329,7 @@ WHERE
       $menuprint = false;
     }
     print "                <td>\n";
-    print "<a href=\"" . "./fp_networks.php". "\"" . " title=\"Social Networks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Social Networks</p></div></a>";
+    print "<a href=\"" . "./fp_networks.php". "\"" . " title=\"Networks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Networks</p></div></a>";
     print "                </td>\n";
     $menuprint = true;
     print "            </tr>\n";
@@ -283,20 +341,26 @@ WHERE
 
     print "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n";
     print "<tr>\n";
-    print "<td width=\"1\" align=\"left\" valign=\"top\">\n";
+    print "<td width=\"1\" rowspan=\"2\" align=\"left\" valign=\"top\">\n";
     print "</td>\n";
     print "<td align=\"left\" class=\"siteMenuGap\">&nbsp;</td>\n";
-    print "<td valign=\"top\">\n";
+    print "<td align=\"left\" valign=\"top\">\n";
+    art_simplesearch_display($quick_search);
+    print "</td>\n";
+    print "</tr>\n";
+    print "<tr>\n";
+    print "<td align=\"left\">&nbsp;</td>\n";
+    print "<td align=\"left\">\n";
     print "<br />\n";
     print "<div id=\"defaulttheme\">";
-    print "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridTable\"  width=\"90%\">\n";
+    print "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridTable\"  width=\"90%\" align=\"center\">\n";
     print "    <tr>\n";
     print "        <td>\n";
     $gridtitle = "Active Users";
     print "            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridHeader\" >\n";
     print "                <tr>\n";
     print "                    <td class=\"gridHeaderBGLeft\" nowrap >&nbsp;</td>\n";
-    print "                    <td class=\"gridHeaderBG\" colspan=\"15\">\n";
+    print "                    <td class=\"gridHeaderBG\" colspan=\"16\">\n";
     print "                        <table border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n";
     print "                            <tr>\n";
     print "                                <td valign=\"baseline\" ><span class=\"gridHeaderText\">" . $gridtitle . "</span></td>\n";
@@ -309,14 +373,16 @@ WHERE
     print "";
     print "            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridToolBar\" >\n";
     print "                <tr>\n";
-    print "                    <td colspan=\"15\">\n";
+    print "                    <td colspan=\"16\">\n";
     print "                        <table border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n";
     print "                            <tr>\n";
     print "                                <td valign=\"baseline\" >";
     art_gridtoolbar_display($category);
     print "                                </td>\n";
     print "                                <td align=\"right\">\n";
+    print "<a href=\"" . art_gen_url("fp_activeusers_ajax.php?clr_fp_activeusers_adv_session=y", 1). "\"" . " title=\"Show All\" class=\"gridToolBarLink\"><img src=\"./images/defaultbutton/show_all.gif\" border=\"0\" /></a>";
     print "&nbsp;<a href=\"" . art_gen_url("fp_activeusers_ajax.php?clr_fp_activeusers=t", 1). "\"" . " title=\"Clear Sort\" class=\"gridToolBarLink\"><img src=\"./images/defaultbutton/clear_sort.gif\" border=\"0\" /></a>";
+    print "&nbsp;<a href=\"" . "./fp_activeuserssearch.php". "\"" . " title=\"Advance Search\" class=\"gridToolBarLink\"><img src=\"./images/defaultbutton/adv_search.gif\" border=\"0\" /></a>";
     print "&nbsp;<a href=\"" . "./fp_adduser.php". "\"" . " title=\"Add New\" class=\"gridToolBarLink\"><img src=\"./images/defaultbutton/add.gif\" border=\"0\" /></a>";
     print "&nbsp;";
     print "                                </td>\n";
@@ -329,7 +395,7 @@ WHERE
     print "                <tr>\n";
     print "                    <td class=\"gridColumn\"  NOWRAP >\n";
     print "                        <div class=\"gridColumnText\">\n";
-    print "                            <a href=\"" . art_gen_url($qrystr[1], 1) . "\" class=\"gridColumnLink\">Username</a>\n";
+    print "                            <a href=\"" . art_gen_url($qrystr[1], 1) . "\" class=\"gridColumnLink\">Token Code</a>\n";
     if ($sort1 == "1") {
         print "                            <a href=\"" . art_gen_url($qrystr[1] ,1) . "\" class=\"gridColumnLink\"><img src=\"./images/defaultbutton/sort_asc.gif\" border=\"0\" /></a>\n";
     } else if ($sort1 == "2"){
@@ -377,7 +443,7 @@ WHERE
     print "                    </td>\n";
     print "                    <td class=\"gridColumn\"  NOWRAP >\n";
     print "                        <div class=\"gridColumnText\">\n";
-    print "                            <a href=\"" . art_gen_url($qrystr[5], 1) . "\" class=\"gridColumnLink\">Active User</a>\n";
+    print "                            <a href=\"" . art_gen_url($qrystr[5], 1) . "\" class=\"gridColumnLink\">Membership Date</a>\n";
     if ($sort5 == "1") {
         print "                            <a href=\"" . art_gen_url($qrystr[5] ,1) . "\" class=\"gridColumnLink\"><img src=\"./images/defaultbutton/sort_asc.gif\" border=\"0\" /></a>\n";
     } else if ($sort5 == "2"){
@@ -389,7 +455,7 @@ WHERE
     print "                    </td>\n";
     print "                    <td class=\"gridColumn\"  NOWRAP >\n";
     print "                        <div class=\"gridColumnText\">\n";
-    print "                            <a href=\"" . art_gen_url($qrystr[6], 1) . "\" class=\"gridColumnLink\">Membership Date</a>\n";
+    print "                            <a href=\"" . art_gen_url($qrystr[6], 1) . "\" class=\"gridColumnLink\">User Email</a>\n";
     if ($sort6 == "1") {
         print "                            <a href=\"" . art_gen_url($qrystr[6] ,1) . "\" class=\"gridColumnLink\"><img src=\"./images/defaultbutton/sort_asc.gif\" border=\"0\" /></a>\n";
     } else if ($sort6 == "2"){
@@ -401,7 +467,7 @@ WHERE
     print "                    </td>\n";
     print "                    <td class=\"gridColumn\"  NOWRAP >\n";
     print "                        <div class=\"gridColumnText\">\n";
-    print "                            <a href=\"" . art_gen_url($qrystr[7], 1) . "\" class=\"gridColumnLink\">User Email</a>\n";
+    print "                            <a href=\"" . art_gen_url($qrystr[7], 1) . "\" class=\"gridColumnLink\">Birth Date</a>\n";
     if ($sort7 == "1") {
         print "                            <a href=\"" . art_gen_url($qrystr[7] ,1) . "\" class=\"gridColumnLink\"><img src=\"./images/defaultbutton/sort_asc.gif\" border=\"0\" /></a>\n";
     } else if ($sort7 == "2"){
@@ -413,7 +479,7 @@ WHERE
     print "                    </td>\n";
     print "                    <td class=\"gridColumn\"  NOWRAP >\n";
     print "                        <div class=\"gridColumnText\">\n";
-    print "                            <a href=\"" . art_gen_url($qrystr[8], 1) . "\" class=\"gridColumnLink\">Birth Date</a>\n";
+    print "                            <a href=\"" . art_gen_url($qrystr[8], 1) . "\" class=\"gridColumnLink\">Portable</a>\n";
     if ($sort8 == "1") {
         print "                            <a href=\"" . art_gen_url($qrystr[8] ,1) . "\" class=\"gridColumnLink\"><img src=\"./images/defaultbutton/sort_asc.gif\" border=\"0\" /></a>\n";
     } else if ($sort8 == "2"){
@@ -425,7 +491,7 @@ WHERE
     print "                    </td>\n";
     print "                    <td class=\"gridColumn\"  NOWRAP >\n";
     print "                        <div class=\"gridColumnText\">\n";
-    print "                            <a href=\"" . art_gen_url($qrystr[9], 1) . "\" class=\"gridColumnLink\">Portable</a>\n";
+    print "                            <a href=\"" . art_gen_url($qrystr[9], 1) . "\" class=\"gridColumnLink\">Microsoft</a>\n";
     if ($sort9 == "1") {
         print "                            <a href=\"" . art_gen_url($qrystr[9] ,1) . "\" class=\"gridColumnLink\"><img src=\"./images/defaultbutton/sort_asc.gif\" border=\"0\" /></a>\n";
     } else if ($sort9 == "2"){
@@ -437,7 +503,7 @@ WHERE
     print "                    </td>\n";
     print "                    <td class=\"gridColumn\"  NOWRAP >\n";
     print "                        <div class=\"gridColumnText\">\n";
-    print "                            <a href=\"" . art_gen_url($qrystr[10], 1) . "\" class=\"gridColumnLink\">Microsoft</a>\n";
+    print "                            <a href=\"" . art_gen_url($qrystr[10], 1) . "\" class=\"gridColumnLink\">Sony</a>\n";
     if ($sort10 == "1") {
         print "                            <a href=\"" . art_gen_url($qrystr[10] ,1) . "\" class=\"gridColumnLink\"><img src=\"./images/defaultbutton/sort_asc.gif\" border=\"0\" /></a>\n";
     } else if ($sort10 == "2"){
@@ -449,7 +515,7 @@ WHERE
     print "                    </td>\n";
     print "                    <td class=\"gridColumn\"  NOWRAP >\n";
     print "                        <div class=\"gridColumnText\">\n";
-    print "                            <a href=\"" . art_gen_url($qrystr[11], 1) . "\" class=\"gridColumnLink\">Playstation</a>\n";
+    print "                            <a href=\"" . art_gen_url($qrystr[11], 1) . "\" class=\"gridColumnLink\">Computer</a>\n";
     if ($sort11 == "1") {
         print "                            <a href=\"" . art_gen_url($qrystr[11] ,1) . "\" class=\"gridColumnLink\"><img src=\"./images/defaultbutton/sort_asc.gif\" border=\"0\" /></a>\n";
     } else if ($sort11 == "2"){
@@ -461,13 +527,25 @@ WHERE
     print "                    </td>\n";
     print "                    <td class=\"gridColumn\"  NOWRAP >\n";
     print "                        <div class=\"gridColumnText\">\n";
-    print "                            <a href=\"" . art_gen_url($qrystr[12], 1) . "\" class=\"gridColumnLink\">Pc</a>\n";
+    print "                            <a href=\"" . art_gen_url($qrystr[12], 1) . "\" class=\"gridColumnLink\">Nintendo</a>\n";
     if ($sort12 == "1") {
         print "                            <a href=\"" . art_gen_url($qrystr[12] ,1) . "\" class=\"gridColumnLink\"><img src=\"./images/defaultbutton/sort_asc.gif\" border=\"0\" /></a>\n";
     } else if ($sort12 == "2"){
         print "                            <a href=\"" . art_gen_url($qrystr[12] ,1) . "\" class=\"gridColumnLink\"><img src=\"./images/defaultbutton/sort_desc.gif\" border=\"0\" /></a>\n";
     } else if (trim($sort12) == ""){
         print "                            <a href=\"" . art_gen_url($qrystr[12] ,1) . "\" class=\"gridColumnLink\"><img src=\"./images/defaultbutton/sort_none.gif\" border=\"0\" /></a>\n";
+    }
+    print "                        </div>\n";
+    print "                    </td>\n";
+    print "                    <td class=\"gridColumn\"  NOWRAP >\n";
+    print "                        <div class=\"gridColumnText\">\n";
+    print "                            <a href=\"" . art_gen_url($qrystr[13], 1) . "\" class=\"gridColumnLink\">Site Admin</a>\n";
+    if ($sort13 == "1") {
+        print "                            <a href=\"" . art_gen_url($qrystr[13] ,1) . "\" class=\"gridColumnLink\"><img src=\"./images/defaultbutton/sort_asc.gif\" border=\"0\" /></a>\n";
+    } else if ($sort13 == "2"){
+        print "                            <a href=\"" . art_gen_url($qrystr[13] ,1) . "\" class=\"gridColumnLink\"><img src=\"./images/defaultbutton/sort_desc.gif\" border=\"0\" /></a>\n";
+    } else if (trim($sort13) == ""){
+        print "                            <a href=\"" . art_gen_url($qrystr[13] ,1) . "\" class=\"gridColumnLink\"><img src=\"./images/defaultbutton/sort_none.gif\" border=\"0\" /></a>\n";
     }
     print "                        </div>\n";
     print "                    </td>\n";
@@ -545,13 +623,6 @@ WHERE
             print $svalue;
             print "</td>\n";
             print "<td align=\"center\" >";
-            $svalue = art_check_null( art_rowdata($row, 5) );
-            if ($svalue != "&nbsp;"){
-                $svalue = htmlspecialchars($svalue);
-            }
-            print $svalue;
-            print "</td>\n";
-            print "<td align=\"center\" >";
             $svalue = art_check_null( art_format_date( art_rowdata($row, 6) , "m/d/Y") );
             if ($svalue != "&nbsp;"){
                 $svalue = htmlspecialchars($svalue);
@@ -601,6 +672,20 @@ WHERE
             print $svalue;
             print "</td>\n";
             print "<td align=\"center\" >";
+            $svalue = art_check_null( art_rowdata($row, 13) );
+            if ($svalue != "&nbsp;"){
+                $svalue = htmlspecialchars($svalue);
+            }
+            print $svalue;
+            print "</td>\n";
+            print "<td align=\"center\" >";
+            $svalue = art_check_null( art_rowdata($row, 14) );
+            if ($svalue != "&nbsp;"){
+                $svalue = htmlspecialchars($svalue);
+            }
+            print $svalue;
+            print "</td>\n";
+            print "<td align=\"center\" >";
             print "<a href=\"" . "./fp_edituser.php". "?edituserbyid=" . art_rowdata_byname($row, $field_names, "fp_users.fpUsersID"). "\"" . " title=\"Edit\" target=\"_self\" class=\"gridBodyLink\">";
             $filename = "./images/defaultbutton/edit.gif";
             if ($filename == ""){
@@ -633,14 +718,14 @@ WHERE
         }
     } else {
         print "                <tr class=\"gridRow\">\n";
-        print "                    <td colspan=\"15\" ><div class=\"gridErrMsg\">" . $emptydatatext . "</div></td>\n";
+        print "                    <td colspan=\"16\" ><div class=\"gridErrMsg\">" . $emptydatatext . "</div></td>\n";
         print "                </tr>\n";
     }
     print "            </table>\n";
     print "            <table  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridFooter\" >\n";
     print "                <tr>\n";
     print "                    <td class=\"gridFooterLeft\" nowrap >&nbsp;</td>\n";
-    print "                    <td class=\"gridFooterBG\" colspan=\"15\">\n";
+    print "                    <td class=\"gridFooterBG\" colspan=\"16\">\n";
     if ( ($numrows > 0) && ($result) ){
         if (isset($_SERVER["QUERY_STRING"])){
             parse_str($_SERVER["QUERY_STRING"], $query_array);
@@ -728,7 +813,6 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
         ,'fp_rank.fp_rankName'
         ,'fp_userprops.userFirstName'
         ,'fp_userprops.userLastName'
-        ,'fp_refYesNo.yesNoVal'
         ,'fp_users.membershipDate'
         ,'fp_userprops.userEmail'
         ,'fp_userprops.userBirthDate'
@@ -736,12 +820,14 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
         ,'fp_refYesNo2.yesNoVal'
         ,'fp_refYesNo3.yesNoVal'
         ,'fp_refYesNo4.yesNoVal'
+        ,'fp_refYesNo5.yesNoVal'
+        ,'fp_refYesNo6.yesNoVal'
         ,''
         ,''
         ,''
 	  );
 
-    $qrystr = array_fill(0, 15, "");
+    $qrystr = array_fill(0, 16, "");
 
     $clr = art_request("clr_fp_activeusers", "");
     $clr_adv_session = art_request("clr_fp_activeusers_adv_session", "");
@@ -762,6 +848,7 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
         art_clear_session("fp_activeusers_sort13");	
         art_clear_session("fp_activeusers_sort14");	
         art_clear_session("fp_activeusers_sort15");	
+        art_clear_session("fp_activeusers_sort16");	
         $clr = "";
 	  }
 
@@ -774,7 +861,7 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
         $quick_search = "";
         $category = "";
 	  }
-    art_assign_session("fp_activeusers_page_size", 20);
+    art_assign_session("fp_activeusers_page_size", 100);
     art_assign_session("fp_activeusers_page", "1");
     art_assign_session("fp_activeusers_sort1", "");
     art_assign_session("fp_activeusers_sort2", "");
@@ -791,6 +878,7 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
     art_assign_session("fp_activeusers_sort13", "");
     art_assign_session("fp_activeusers_sort14", "");
     art_assign_session("fp_activeusers_sort15", "");
+    art_assign_session("fp_activeusers_sort16", "");
     $sql_array  = art_split_sql(" SELECT 
   fp_users.fpUsersID AS UserID,
   fp_users.username,
@@ -804,7 +892,9 @@ function art_groupdatagrid_display($field_names, $page_size, $current_page, $qui
   fp_refYesNo1.yesNoVal AS portable,
   fp_refYesNo2.yesNoVal AS microsoft,
   fp_refYesNo3.yesNoVal AS playstation,
-  fp_refYesNo4.yesNoVal AS pc
+  fp_refYesNo4.yesNoVal AS pc,
+  fp_refYesNo5.yesNoVal AS nintendo,
+  fp_refYesNo6.yesNoVal AS siteadmin
 FROM
   fp_users
   LEFT OUTER JOIN fp_userprops ON (fp_users.fpUsersID = fp_userprops.fpUserID)
@@ -815,6 +905,8 @@ FROM
   INNER JOIN fp_refYesNo fp_refYesNo2 ON (fp_userpermissions.microsoft = fp_refYesNo2.refEnabledID)
   INNER JOIN fp_refYesNo fp_refYesNo3 ON (fp_userpermissions.playstation = fp_refYesNo3.refEnabledID)
   INNER JOIN fp_refYesNo fp_refYesNo4 ON (fp_userpermissions.pc = fp_refYesNo4.refEnabledID)
+  INNER JOIN fp_refYesNo fp_refYesNo5 ON (fp_userpermissions.nintendo = fp_refYesNo5.refEnabledID)
+  INNER JOIN fp_refYesNo fp_refYesNo6 ON (fp_userpermissions.admin = fp_refYesNo6.refEnabledID)
 WHERE
   fp_users.userActive = 1"); 
     $sql_start = $sql_array[0]; 
@@ -835,12 +927,13 @@ WHERE
     $sort13 = art_session("fp_activeusers_sort13", "");
     $sort14 = art_session("fp_activeusers_sort14", "");
     $sort15 = art_session("fp_activeusers_sort15", "");
-    $page_size = art_session("fp_activeusers_page_size", "20");
+    $sort16 = art_session("fp_activeusers_sort16", "");
+    $page_size = art_session("fp_activeusers_page_size", "100");
     $page = art_session("fp_activeusers_page", "1");
     $current_page = $page;
     $search = "";
-    $sql_condition = $sql_start;
-    for ($i=1; $i<=15; $i++){
+    $sql_condition = $sql_start . art_simplesearch_sql($sql_start, $quick_search);
+    for ($i=1; $i<=16; $i++){
         $sorting = "";
         $sort_order = "";
 		    if (art_session("fp_activeusers_sort".$i, "") == "1"){
@@ -889,7 +982,7 @@ WHERE
     print "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  width=\"100%\">\n";
     print "    <tr>\n";
     print "    <td colspan=\"3\" valign=\"top\" class=\"mainMenuBG\" >\n";
-    print "        <table align=\"left\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
+    print "        <table align=\"center\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
     print "            <tr>\n";
     $sessionlevel = art_session('art_user_level', -1);
     $menuprint = false;
@@ -914,6 +1007,18 @@ WHERE
       $menuprint = false;
     }
     print "                <td>\n";
+    print "<a href=\"" . "./fp_allusers.php". "\"" . " title=\"All Users\" target=\"_self\" class=\"mainMenuLink\"><div><p>All Users</p></div></a>";
+    print "                </td>\n";
+    $menuprint = true;
+    if ($menuprint) {
+      print "                <td>\n";
+      print "                    <span class=\"mainMenuText\">\n";
+      print "                        &nbsp;|&nbsp;\n";
+      print "                    </span>\n";
+      print "                </td>\n";
+      $menuprint = false;
+    }
+    print "                <td>\n";
     print "<a href=\"" . "./fp_rank.php". "\"" . " title=\"Ranks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Ranks</p></div></a>";
     print "                </td>\n";
     $menuprint = true;
@@ -926,7 +1031,7 @@ WHERE
       $menuprint = false;
     }
     print "                <td>\n";
-    print "<a href=\"" . "./fp_networks.php". "\"" . " title=\"Social Networks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Social Networks</p></div></a>";
+    print "<a href=\"" . "./fp_networks.php". "\"" . " title=\"Networks\" target=\"_self\" class=\"mainMenuLink\"><div><p>Networks</p></div></a>";
     print "                </td>\n";
     $menuprint = true;
     print "            </tr>\n";
@@ -938,20 +1043,26 @@ WHERE
 
     print "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n";
     print "<tr>\n";
-    print "<td width=\"1\" align=\"left\" valign=\"top\">\n";
+    print "<td width=\"1\" rowspan=\"2\" align=\"left\" valign=\"top\">\n";
     print "</td>\n";
     print "<td align=\"left\" class=\"siteMenuGap\">&nbsp;</td>\n";
-    print "<td valign=\"top\">\n";
+    print "<td align=\"left\" valign=\"top\">\n";
+    art_simplesearch_display($quick_search);
+    print "</td>\n";
+    print "</tr>\n";
+    print "<tr>\n";
+    print "<td align=\"left\">&nbsp;</td>\n";
+    print "<td align=\"left\">\n";
     print "<br />\n";
     print "<div id=\"defaulttheme\">";
-    print "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridTable\"  width=\"90%\">\n";
+    print "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridTable\"  width=\"90%\" align=\"center\">\n";
     print "    <tr>\n";
     print "        <td>\n";
     $gridtitle = "Active Users";
     print "            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridHeader\" >\n";
     print "                <tr>\n";
     print "                    <td class=\"gridHeaderBGLeft\" nowrap >&nbsp;</td>\n";
-    print "                    <td class=\"gridHeaderBG\" colspan=\"15\">\n";
+    print "                    <td class=\"gridHeaderBG\" colspan=\"16\">\n";
     print "                        <table border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n";
     print "                            <tr>\n";
     print "                                <td valign=\"baseline\" ><span class=\"gridHeaderText\">" . $gridtitle . "</span></td>\n";
@@ -963,14 +1074,16 @@ WHERE
     print "            </table>\n";
     print "            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridToolBar\" >\n";
     print "                <tr>\n";
-    print "                    <td colspan=\"15\">\n";
+    print "                    <td colspan=\"16\">\n";
     print "                        <table border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n";
     print "                            <tr>\n";
     print "                                <td valign=\"baseline\" >";
     art_gridtoolbar_display($category);
     print "                                </td>\n";
     print "                                <td align=\"right\">\n";
+    print "<a href=\"" . art_gen_url("fp_activeusers_ajax.php?clr_fp_activeusers_adv_session=y", 1). "\"" . " title=\"Show All\" class=\"gridToolBarLink\"><img src=\"./images/defaultbutton/show_all.gif\" border=\"0\" /></a>";
     print "&nbsp;<a href=\"" . art_gen_url("fp_activeusers_ajax.php?clr_fp_activeusers=t", 1). "\"" . " title=\"Clear Sort\" class=\"gridToolBarLink\"><img src=\"./images/defaultbutton/clear_sort.gif\" border=\"0\" /></a>";
+    print "&nbsp;<a href=\"" . "./fp_activeuserssearch.php". "\"" . " title=\"Advance Search\" class=\"gridToolBarLink\"><img src=\"./images/defaultbutton/adv_search.gif\" border=\"0\" /></a>";
     print "&nbsp;<a href=\"" . "./fp_adduser.php". "\"" . " title=\"Add New\" class=\"gridToolBarLink\"><img src=\"./images/defaultbutton/add.gif\" border=\"0\" /></a>";
     print "&nbsp;";
     print "                                </td>\n";
@@ -982,18 +1095,19 @@ WHERE
     print "            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridMain\" >\n";
     print "            <tbody>\n";
     print "                <tr>\n";
-    print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Username</div></td>\n";
+    print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Token Code</div></td>\n";
     print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Rank</div></td>\n";
     print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">First Name</div></td>\n";
     print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Last Name</div></td>\n";
-    print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Active User</div></td>\n";
     print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Membership Date</div></td>\n";
     print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">User Email</div></td>\n";
     print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Birth Date</div></td>\n";
     print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Portable</div></td>\n";
     print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Microsoft</div></td>\n";
-    print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Playstation</div></td>\n";
-    print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Pc</div></td>\n";
+    print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Sony</div></td>\n";
+    print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Computer</div></td>\n";
+    print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Nintendo</div></td>\n";
+    print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Site Admin</div></td>\n";
     print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Edit User</div></td>\n";
     print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Edit Details</div></td>\n";
     print "                    <td class=\"gridColumn\" ><div class=\"gridColumnText\">Edit Permissions</div></td>\n";
@@ -1021,7 +1135,7 @@ WHERE
                 }
                 print "            <tbody id=\"header_gr_". $gr_1 ."\">\n"; 
                 print "                <tr>\n"; 
-                print "                    <td colspan=\"15\" class=\"groupCaption\">\n"; 
+                print "                    <td colspan=\"16\" class=\"groupCaption\">\n"; 
                 print "                    <div class=\"gridToolBarText\" align=\"left\">";
                 print "<a href=\"javascript:art_toggle_groupdetail('"."gr_".$gr_1."','"."bt_collapse_".$gr_1."','"."bt_expand_".$gr_1."');\" title=\"" . CAP_CLOSE_GROUP . "\">";
                 print "<img type=\"image\" id=\"bt_collapse_".$gr_1."\" src=\"images/defaultbutton/ic_collapse.gif\" style=\"display:'\" border=\"0\" align=\"absmiddle\" alt=\"" . CAP_CLOSE_GROUP . "\" ></a>\n";
@@ -1079,13 +1193,6 @@ WHERE
             print $svalue;
             print "</td>\n";
             print "<td align=\"center\" >";
-            $svalue = art_check_null( art_rowdata($row, 5) );
-            if ($svalue != "&nbsp;"){
-                $svalue = htmlspecialchars($svalue);
-            }
-            print $svalue;
-            print "</td>\n";
-            print "<td align=\"center\" >";
             $svalue = art_check_null( art_format_date( art_rowdata($row, 6) , "m/d/Y") );
             if ($svalue != "&nbsp;"){
                 $svalue = htmlspecialchars($svalue);
@@ -1135,6 +1242,20 @@ WHERE
             print $svalue;
             print "</td>\n";
             print "<td align=\"center\" >";
+            $svalue = art_check_null( art_rowdata($row, 13) );
+            if ($svalue != "&nbsp;"){
+                $svalue = htmlspecialchars($svalue);
+            }
+            print $svalue;
+            print "</td>\n";
+            print "<td align=\"center\" >";
+            $svalue = art_check_null( art_rowdata($row, 14) );
+            if ($svalue != "&nbsp;"){
+                $svalue = htmlspecialchars($svalue);
+            }
+            print $svalue;
+            print "</td>\n";
+            print "<td align=\"center\" >";
             print "<a href=\"" . "./fp_edituser.php". "?edituserbyid=" . art_rowdata_byname($row, $field_names, "fp_users.fpUsersID"). "\"" . " title=\"Edit\" target=\"_self\" class=\"gridBodyLink\">";
             $filename = "./images/defaultbutton/edit.gif";
             if ($filename == ""){
@@ -1167,14 +1288,14 @@ WHERE
         }
     }else {
         print "                <tr class=\"gridRow\">\n";
-        print "                    <td colspan=\"15\" ><div class=\"gridErrMsg\">" . $emptydatatext . "</div></td>\n";
+        print "                    <td colspan=\"16\" ><div class=\"gridErrMsg\">" . $emptydatatext . "</div></td>\n";
         print "                </tr>\n";
     }
     print "            </table>\n";
     print "            <table  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"gridFooter\" >\n";
     print "                <tr>\n";
     print "                    <td class=\"gridFooterLeft\" nowrap >&nbsp;</td>\n";
-    print "                    <td class=\"gridFooterBG\" colspan=\"15\">\n";
+    print "                    <td class=\"gridFooterBG\" colspan=\"16\">\n";
     if ( ($numrows > 0) && ($result) ) {
         if (isset($_SERVER["QUERY_STRING"])) {
             parse_str($_SERVER["QUERY_STRING"], $query_array);

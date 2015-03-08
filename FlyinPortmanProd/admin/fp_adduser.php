@@ -37,13 +37,21 @@ if ($err_string == "SUCCESS") {
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="./css/globalcss.css" rel="stylesheet" type="text/css">
 <link href="./css/defaulttheme.css" rel="stylesheet" type="text/css">
+<link href="./css/loadingmsg.css" rel="stylesheet" type="text/css">
 <link href="components/calendar/basicgray/jscalendar.css" rel="stylesheet" type="text/css" />
 <script language="javascript" type="text/javascript" src="./js/prototype.js"></script>
 <script language="javascript" type="text/javascript" src="./js/art_ajax.js"></script>
+<script language="javascript" type="text/javascript" src="./js/art_msg.js"></script>
 <script language="javascript" type="text/javascript" src="components/calendar/basicgray/jscalendar.js"></script>
 </head>
 <body>
-
+<iframe id="ifrmSearch" frameborder="0" style="position: absolute; filter: progid:DXImageTransform.Microsoft.Alpha(style=0,opacity=0);
+display: none; width: 100%; height: 100%; z-index: 999;" scrolling="no"></iframe>
+<div id="mainAreaLoading" style="display: None;">
+<?php
+art_waitingmsg_display();
+?>
+</div>
     <table border="0" cellpadding="0" cellspacing="0" width="100%">
         <tr>
             <td></td>

@@ -1,0 +1,6 @@
+<?php
+$servername = "local host or db url";
+$username = "username";
+$password = "password";
+$dbname = "dbname";
+?>

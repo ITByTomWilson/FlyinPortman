@@ -6,7 +6,7 @@
  * Time: 10:28 PM
  */
 
-if ($_SESSION['loggedin'] == 'true')
+if ($_SESSION['loggedin'] == 1)
 {
     echo "<form id=\"logoff\" action=\"php/logoff.php\" method=\"post\"><input id=\"submit\" name=\"submit\" type=\"submit\" value=\"Logoff\" /></form>";
 }else{
